@@ -1,0 +1,49 @@
+.container {
+    max-width: 1800px;
+    padding-top: 2rem
+}
+
+.table-container {}
+
+.keyboard-container {
+    height: 600px;
+    background-color: aliceblue;
+}
+
+.nav-tabs {
+    margin-bottom: 1rem;
+}
+
+#myTab {
+    height: 4rem;
+}
+
+#myTab .nav-item {
+    flex: 1 1 auto;
+    text-align: center;
+}
+
+#myTab .nav-item .nav-link {
+    display: block;
+    height: 100%;
+    line-height: 3rem;
+    border: 1px solid #dee2e6;
+}
+
+#myTab .nav-item .nav-link.active {
+    background-color: aliceblue;
+}
+
+.fixed-table-body::-webkit-scrollbar {
+    width: 10px;
+}
+
+.fixed-table-body::-webkit-scrollbar-track {
+    background: #eee;
+    border-radius: 2px;
+}
+
+.fixed-table-body::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 5px;
+}

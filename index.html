@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>键盘事件code/key/keyCode对照一览表</title>
+
+    <!-- <link rel="stylesheet" href="css/style.css" media="screen" type="text/css" /> -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-table@1.21.1/dist/bootstrap-table.min.css">
+    <!-- <link rel="stylesheet" href="./theme.css"> -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-keyboard@latest/build/css/index.css">
+    <link rel="stylesheet" href="./css/index.css">
+
+</head>
+
+<body>
+    <style type="text/css">
+
+    </style>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-6">
+                <div class="table-container">
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">键盘录入</a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">keyCode反查</a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">分类表</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="myTabContent">
+                        <!-- 键盘录入 -->
+                        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                            <div id='wrapper'>
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon1">@</span>
+                                    </div>
+                                    <input type="text" class="form-control" placeholder="录入" aria-label="录入" aria-describedby="basic-addon1" id="input">
+                                </div>
+                                <div>
+                                    <table class="table table-condensed" id="typedTable" data-toggle="table" data-height="600">
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- keyCode查询 -->
+                        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                            <div id='wrapper'>
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon1">#</span>
+                                    </div>
+                                    <input type="text" class="form-control" placeholder="请输入keyCode数值" aria-label="请输入keyCode数值" aria-describedby="basic-addon1" id="inputNumber">
+                                </div>
+                                <div>
+                                    <table class="table table-condensed" id="searchTable" data-toggle="table" data-height="600">
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+                            <div id='wrapper'>
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon1">%</span>
+                                    </div>
+                                    <input type="text" class="form-control" placeholder="请输入keyCode数值" aria-label="请输入keyCode数值" aria-describedby="basic-addon1" id="inputValue">
+                                </div>
+                                <div>
+                                    <table class="table table-condensed" id="categoryTable" data-toggle="table" data-height="600">
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+
+                <div class="keyboard-container">
+                    <input class="input" placeholder="Tap on the virtual keyboard to start" />
+                    <div class="simple-keyboard"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- Content here -->
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.21.1/dist/bootstrap-table.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/simple-keyboard@latest/build/index.js"></script>
+    <script src="./theme.js"></script>
+    <script>
+        var code;
+        var key;
+        var keyCode;
+        var input = document.getElementById("input");
+        var inputNumber = $('#inputNumber');
+        var typedTable = $('#typedTable');
+        var searchTable = $('#searchTable');
+        var categoryTable = $('#categoryTable');
+        var navLink = $('.nav-link');
+        var tableConfig = {
+            sidePagination: "true",
+            striped: true, // 是否显示行间隔色
+            //search : "true",
+            uniqueId: "ID",
+            pageSize: "5",
+            pagination: false, // 是否分页
+            sortable: true, // 是否启用排序
+            columns: [{
+                    field: 'key',
+                    title: 'key',
+                    width: 80,
+                    align: 'center',
+                    valign: 'middle',
+                }, {
+                    field: 'code',
+                    title: 'code',
+                    width: 80,
+                    align: 'center',
+                    valign: 'middle',
+                }, {
+                    field: 'keyCode',
+                    title: 'keyCode',
+                    width: 40,
+                    align: 'center',
+                    valign: 'middle',
+                },
+
+            ]
+        }
+
+        typedTable.bootstrapTable(tableConfig);
+        searchTable.bootstrapTable(tableConfig);
+        categoryTable.bootstrapTable(tableConfig);
+
+        document.addEventListener('keydown', function(e) {
+            // 展示键盘事件对象中的属性
+            console.log('🚀 -> document.addEventListener -> e', e);
+            let rowData = {
+                key: e.key,
+                code: e.code,
+                keyCode: e.keyCode,
+            }
+            typedTable.bootstrapTable('insertRow', {
+                index: 0,
+                row: rowData
+            })
+        })
+        navLink.on('click', function(e) {
+            console.log('🚀 -> navLink.on -> e', e);
+            searchTable.bootstrapTable('resetView');
+
+        });
+        var data = [{
+            key: 'A',
+            code: 'keyA',
+            keyCode: 65,
+        }, {
+            key: 'B',
+            code: 'keyB',
+            keyCode: 66,
+        }, {
+            key: 'C',
+            code: 'keyC',
+            keyCode: 67,
+        }, {
+            key: 'D',
+            code: 'keyD',
+            keyCode: 68,
+        }, {
+            key: 'E',
+            code: 'keyE',
+            keyCode: 69,
+        }, {
+            key: 'F',
+            code: 'keyF',
+            keyCode: 70,
+        }, {
+            key: 'G',
+            code: 'keyG',
+            keyCode: 71,
+        }, {
+            key: 'H',
+            code: 'keyH',
+            keyCode: 72,
+        }, {
+            key: 'I',
+            code: 'keyI',
+            keyCode: 73,
+        }, {
+            key: 'J',
+            code: 'keyJ',
+            keyCode: 74,
+        }, {
+            key: 'K',
+            code: 'keyK',
+            keyCode: 75,
+        }, {
+            key: 'L',
+            code: 'keyL',
+            keyCode: 76,
+        }, {
+            key: 'M',
+            code: 'keyM',
+            keyCode: 77,
+        }, {
+            key: 'N',
+            code: 'keyN',
+            keyCode: 78,
+        }, {
+            key: 'O',
+            code: 'keyO',
+            keyCode: 79,
+        }, {
+            key: 'P',
+            code: 'keyP',
+            keyCode: 80,
+        }, {
+            key: 'Q',
+            code: 'keyQ',
+            keyCode: 81,
+        }, {
+            key: 'R',
+            code: 'keyA',
+            keyCode: 82,
+        }, {
+            key: 'S',
+            code: 'keyS',
+            keyCode: 83,
+        }, {
+            key: 'T',
+            code: 'keyT',
+            keyCode: 84,
+        }, {
+            key: 'U',
+            code: 'keyU',
+            keyCode: 85,
+        }, {
+            key: 'V',
+            code: 'keyV',
+            keyCode: 86,
+        }, {
+            key: 'W',
+            code: 'keyW',
+            keyCode: 87,
+        }, {
+            key: 'X',
+            code: 'keyX',
+            keyCode: 88,
+        }, {
+            key: 'Y',
+            code: 'keyY',
+            keyCode: 89,
+        }, {
+            key: 'Z',
+            code: 'keyZ',
+            keyCode: 90,
+        }, {
+            key: 'a',
+            code: 'keyA',
+            keyCode: 65,
+        }, {
+            key: 'b',
+            code: 'keyB',
+            keyCode: 66,
+        }, {
+            key: 'c',
+            code: 'keyC',
+            keyCode: 67,
+        }, {
+            key: 'd',
+            code: 'keyD',
+            keyCode: 68,
+        }, {
+            key: 'e',
+            code: 'keyE',
+            keyCode: 69,
+        }, {
+            key: 'f',
+            code: 'keyF',
+            keyCode: 70,
+        }, {
+            key: 'g',
+            code: 'keyG',
+            keyCode: 71,
+        }, {
+            key: 'h',
+            code: 'keyH',
+            keyCode: 72,
+        }, {
+            key: 'i',
+            code: 'keyI',
+            keyCode: 73,
+        }, {
+            key: 'j',
+            code: 'keyJ',
+            keyCode: 74,
+        }, {
+            key: 'k',
+            code: 'keyK',
+            keyCode: 75,
+        }, {
+            key: 'l',
+            code: 'keyL',
+            keyCode: 76,
+        }, {
+            key: 'm',
+            code: 'keyM',
+            keyCode: 77,
+        }, {
+            key: 'n',
+            code: 'keyN',
+            keyCode: 78,
+        }, {
+            key: 'o',
+            code: 'keyO',
+            keyCode: 79,
+        }, {
+            key: 'p',
+            code: 'keyP',
+            keyCode: 80,
+        }, {
+            key: 'q',
+            code: 'keyQ',
+            keyCode: 81,
+        }, {
+            key: 'r',
+            code: 'keyA',
+            keyCode: 82,
+        }, {
+            key: 's',
+            code: 'keyS',
+            keyCode: 83,
+        }, {
+            key: 't',
+            code: 'keyT',
+            keyCode: 84,
+        }, {
+            key: 'u',
+            code: 'keyU',
+            keyCode: 85,
+        }, {
+            key: 'v',
+            code: 'keyV',
+            keyCode: 86,
+        }, {
+            key: 'w',
+            code: 'keyW',
+            keyCode: 87,
+        }, {
+            key: 'x',
+            code: 'keyX',
+            keyCode: 88,
+        }, {
+            key: 'y',
+            code: 'keyY',
+            keyCode: 89,
+        }, {
+            key: 'z',
+            code: 'keyZ',
+            keyCode: 90,
+        }, {
+            key: '0',
+            code: 'Digit0',
+            keyCode: 48,
+        }, {
+            key: '1',
+            code: 'Digit1',
+            keyCode: 49,
+        }, {
+            key: '2',
+            code: 'Digit2',
+            keyCode: 50,
+        }, {
+            key: '3',
+            code: 'Digit3',
+            keyCode: 51,
+        }, {
+            key: '4',
+            code: 'Digit4',
+            keyCode: 52,
+        }, {
+            key: '5',
+            code: 'Digit5',
+            keyCode: 53,
+        }, {
+            key: '6',
+            code: 'Digit6',
+            keyCode: 54,
+        }, {
+            key: '7',
+            code: 'Digit7',
+            keyCode: 55,
+        }, {
+            key: '8',
+            code: 'Digit8',
+            keyCode: 56,
+        }, {
+            key: '9',
+            code: 'Digit9',
+            keyCode: 57,
+        }, {
+            key: '0',
+            code: 'Numpad0',
+            keyCode: 96,
+        }, {
+            key: '1',
+            code: 'Numpad1',
+            keyCode: 97,
+        }, {
+            key: '2',
+            code: 'Numpad2',
+            keyCode: 98,
+        }, {
+            key: '3',
+            code: 'Numpad3',
+            keyCode: 99,
+        }, {
+            key: '4',
+            code: 'Numpad4',
+            keyCode: 100,
+        }, {
+            key: '5',
+            code: 'Numpad5',
+            keyCode: 101,
+        }, {
+            key: '6',
+            code: 'Numpad6',
+            keyCode: 102,
+        }, {
+            key: '7',
+            code: 'Numpad7',
+            keyCode: 103,
+        }, {
+            key: '8',
+            code: 'Numpad8',
+            keyCode: 104,
+        }, {
+            key: '9',
+            code: 'Numpad9',
+            keyCode: 105,
+        }, {
+            key: '*',
+            code: 'NumpadMultiply',
+            keyCode: 106,
+        }, {
+            key: '+',
+            code: 'NumpadAdd',
+            keyCode: 107,
+        }, {
+            key: 'Enter',
+            code: 'Numpad9',
+            keyCode: 108,
+        }, {
+            key: '-',
+            code: 'NumpadSubtract',
+            keyCode: 109,
+        }, {
+            key: '.',
+            code: 'NumpadDecimal',
+            keyCode: 110,
+        }, {
+            key: '/',
+            code: 'NumpadDivide',
+            keyCode: 111,
+        }, {
+            key: 'F1',
+            code: 'F1',
+            keyCode: 112,
+        }, {
+            key: 'F2',
+            code: 'F2',
+            keyCode: 113,
+        }, {
+            key: 'F3',
+            code: 'F3',
+            keyCode: 114,
+        }, {
+            key: 'F4',
+            code: 'F4',
+            keyCode: 115,
+        }, {
+            key: 'F5',
+            code: 'F5',
+            keyCode: 116,
+        }, {
+            key: 'F6',
+            code: 'F6',
+            keyCode: 117,
+        }, {
+            key: 'F7',
+            code: 'F7',
+            keyCode: 118,
+        }, {
+            key: 'F8',
+            code: 'F8',
+            keyCode: 119,
+        }, {
+            key: 'F9',
+            code: 'F9',
+            keyCode: 120,
+        }, {
+            key: 'F10',
+            code: 'F10',
+            keyCode: 121,
+        }, {
+            key: 'F11',
+            code: 'F11',
+            keyCode: 122,
+        }, {
+            key: 'F12',
+            code: 'F12',
+            keyCode: 123,
+        }, {
+            key: 'BackSpace',
+            code: 'Backspace',
+            keyCode: 8,
+        }, {
+            key: 'Tab',
+            code: 'Tab',
+            keyCode: 9,
+        }, {
+            key: 'Clear',
+            code: 'Numpad5',
+            keyCode: 12,
+        }, {
+            key: 'Enter',
+            code: 'Enter',
+            keyCode: 13,
+        }, {
+            key: 'Enter',
+            code: 'NumpadEnter',
+            keyCode: 13,
+        }, {
+            key: 'Shift',
+            code: 'ShiftLeft',
+            keyCode: 16,
+        }, {
+            key: 'Shift',
+            code: 'ShiftRight',
+            keyCode: 16,
+        }, {
+            key: 'Control',
+            code: 'ControlLeft',
+            keyCode: 17,
+        }, {
+            key: 'Control',
+            code: 'ControlRight',
+            keyCode: 17,
+        }, {
+            key: 'Alt',
+            code: 'AltLeft',
+            keyCode: 18,
+        }, {
+            key: 'Alt',
+            code: 'AltRight',
+            keyCode: 18,
+        }, {
+            key: 'CapsLock',
+            code: 'CapsLock',
+            keyCode: 20,
+        }, {
+            key: 'Escape',
+            code: 'Escape',
+            keyCode: 27,
+        }, {
+            key: ' ',
+            code: 'Space',
+            keyCode: 32,
+        }, {
+            key: 'PageUp',
+            code: 'Numpad9',
+            keyCode: 33,
+        }, {
+            key: 'PageDown',
+            code: 'Numpad3',
+            keyCode: 34,
+        }, {
+            key: 'End',
+            code: 'Numpad1',
+            keyCode: 35,
+        }, {
+            key: 'Home',
+            code: 'Numpad7',
+            keyCode: 36,
+        }, {
+            key: 'ArrowLeft',
+            code: 'ArrowLeft',
+            keyCode: 37,
+        }, {
+            key: 'ArrowUp',
+            code: 'ArrowUp',
+            keyCode: 38,
+        }, {
+            key: 'ArrowRight',
+            code: 'ArrowRight',
+            keyCode: 39,
+        }, {
+            key: 'ArrowDown',
+            code: 'ArrowDown',
+            keyCode: 40,
+        }, {
+            key: 'Insert',
+            code: 'Insert',
+            keyCode: 45,
+        }, {
+            key: 'Delete',
+            code: 'Delete',
+            keyCode: 46,
+        }, {
+            key: 'NumLock',
+            code: 'NumLock',
+            keyCode: 144,
+        }, {
+            key: ';',
+            code: 'Semicolon',
+            keyCode: 186,
+        }, {
+            key: ':',
+            code: 'Semicolon',
+            keyCode: 186,
+        }, {
+            key: '+',
+            code: 'Equal',
+            keyCode: 187,
+        }, {
+            key: '=',
+            code: 'Equal',
+            keyCode: 187,
+        }, {
+            key: ',',
+            code: 'Comma',
+            keyCode: 188,
+        }, {
+            key: '<',
+            code: 'Comma',
+            keyCode: 188,
+        }, {
+            key: '-',
+            code: 'Minus',
+            keyCode: 189,
+        }, {
+            key: '_',
+            code: 'Minus',
+            keyCode: 189,
+        }, {
+            key: '.',
+            code: 'Period',
+            keyCode: 190,
+        }, {
+            key: '>',
+            code: 'Period',
+            keyCode: 190,
+        }, {
+            key: '/',
+            code: 'Slash',
+            keyCode: 191,
+        }, {
+            key: '?',
+            code: 'Slash',
+            keyCode: 191,
+        }, {
+            key: '`',
+            code: 'Backquote',
+            keyCode: 192,
+        }, {
+            key: '~',
+            code: 'Backquote',
+            keyCode: 192,
+        }, {
+            key: '[',
+            code: 'BracketLeft',
+            keyCode: 219,
+        }, {
+            key: '{',
+            code: 'BracketLeft',
+            keyCode: 219,
+        }, {
+            key: '\\',
+            code: 'Backslash',
+            keyCode: 220,
+        }, {
+            key: '|',
+            code: 'Backslash',
+            keyCode: 220,
+        }, {
+            key: ']',
+            code: 'BracketRight',
+            keyCode: 221,
+        }, {
+            key: '}',
+            code: 'BracketRight',
+            keyCode: 221,
+        }, {
+            key: '"',
+            code: 'Quote',
+            keyCode: 222,
+        }, {
+            key: '\'',
+            code: 'Quote',
+            keyCode: 222,
+        }, {
+            key: 'AudioVolumeMute',
+            code: '',
+            keyCode: 173,
+        }, {
+            key: 'AudioVolumeDown',
+            code: '',
+            keyCode: 174,
+        }, {
+            key: 'AudioVolumeUp',
+            code: '',
+            keyCode: 175,
+        }, {
+            key: 'MediaTrackNext',
+            code: '',
+            keyCode: 176,
+        }, {
+            key: 'MediaTrackPrevious',
+            code: '',
+            keyCode: 177,
+        }, {
+            key: 'MediaPlayPause',
+            code: '',
+            keyCode: 179,
+        }, {
+            key: 'LaunchMediaPlayer',
+            code: '',
+            keyCode: 181,
+        }, {
+            key: 'LaunchApplication1',
+            code: '',
+            keyCode: 182,
+        }, {
+            key: 'LaunchApplication2', // 计算器
+            code: '',
+            keyCode: 183,
+        }, {
+            key: 'LaunchApplication2',
+            code: '',
+            keyCode: 183,
+        }]
+        searchTable.bootstrapTable('load', data);
+        categoryTable.bootstrapTable('load', data);
+        inputNumber.bind('input porpertychange', function(e) {
+            console.log('🚀 -> inputNumber.bind -> e', e);
+            let value = e.target.value;
+            console.log('🚀 -> inputNumber.bind -> value', value);
+            console.log('🚀 -> inputNumber.bind -> value typeof ', typeof value);
+            if (value === null || value === undefined || value === '') {
+                searchTable.bootstrapTable('load', data);
+            } else {
+                let rowDatas = data.filter((item) => {
+                    return String(item.keyCode) === value;
+                });
+                console.log('🚀 -> rowDatas -> rowDatas', rowDatas);
+                searchTable.bootstrapTable('load', rowDatas)
+            }
+
+        });
+        const Keyboard = window.SimpleKeyboard.default;
+        console.log('🚀 -> window.SimpleKeyboard', window.SimpleKeyboard);
+
+        const keyboard = new Keyboard({
+            onChange: input => onChange(input),
+            onKeyPress: button => onKeyPress(button)
+        });
+
+        // keyboard.setOptions({
+        //     layout: 'fullKeyboard'
+        // })
+
+        function onChange(input) {
+            document.querySelector(".input").value = input;
+            console.log("Input changed", input);
+        }
+
+        function onKeyPress(button) {
+            console.log("Button pressed", button);
+        }
+        /**
+         * Update simple-keyboard when input is changed directly
+         */
+        document.querySelector(".input").addEventListener("input", event => {
+            console.log('🚀 -> document.querySelector -> event', event);
+            keyboard.setInput(event.target.value);
+        });
+        console.log('🚀 -> document.querySelector -> keyboard', keyboard);
+
+
+        /**
+         * Handle keyboard press
+         */
+        document.addEventListener("keydown", event => {
+            highlightButton(event);
+        });
+
+        document.addEventListener("keyup", event => {
+            unhighlightButton(event);
+        });
+
+        function highlightButton(event) {
+            let layoutKeyName = keyboard.physicalKeyboard.getSimpleKeyboardLayoutKey(
+                event
+            );
+
+            /**
+             * CUSTOM: Making key lowercase
+             */
+            layoutKeyName = layoutKeyName.toLowerCase();
+            console.log('🚀 -> highlightButton -> layoutKeyName', layoutKeyName);
+
+            let buttonElement =
+                keyboard.getButtonElement(layoutKeyName) ||
+                keyboard.getButtonElement(`{${layoutKeyName}}`);
+
+            if (!buttonElement) {
+                console.log("Could not find button in layout", layoutKeyName);
+                return false;
+            }
+
+            buttonElement.style.background = "#9ab4d0";
+            buttonElement.style.color = "white";
+        }
+
+        function unhighlightButton(event) {
+            let layoutKeyName = keyboard.physicalKeyboard.getSimpleKeyboardLayoutKey(
+                event
+            );
+
+            /**
+             * CUSTOM: Making key lowercase
+             */
+            layoutKeyName = layoutKeyName.toLowerCase();
+
+            let buttonElement =
+                keyboard.getButtonElement(layoutKeyName) ||
+                keyboard.getButtonElement(`{${layoutKeyName}}`);
+
+            if (!buttonElement) {
+                console.log("Could not find button in layout", layoutKeyName);
+                return false;
+            }
+
+            buttonElement.removeAttribute("style");
+        }
+    </script>
+</body>
+
+</html>
